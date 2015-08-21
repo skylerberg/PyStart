@@ -1,0 +1,3 @@
+recursive-include pystart/templates *
+include README.md
+include LICENSE
