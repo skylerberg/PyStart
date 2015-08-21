@@ -14,6 +14,17 @@ def get_project_name():
     return sys.argv[1]
 
 
+def get_template_to_file_mapping():
+    project = get_project_name()
+    return {
+        "LICENSE": "LICENSE",
+        "README.md": "README.md",
+        "setup.py": "setup.py",
+        ".gitignore": ".gitignore",
+        "__init__.py": "%s/__init__.py" % project,
+    }
+
+
 def make_directories():
     project_name = get_project_name()
     os.mkdir(project_name)
@@ -34,16 +45,6 @@ def build_files():
         content = template.render(project=project)
         with open(dest, 'w') as file:
             file.write(content)
-
-
-def get_template_to_file_mapping():
-    project = get_project_name()
-    return {
-        "LICENSE": "LICENSE",
-        "setup.py": "setup.py",
-        ".gitignore": ".gitignore",
-        "__init__.py": "%s/__init__.py" % project,
-    }
 
 
 def commit_files(repo):
