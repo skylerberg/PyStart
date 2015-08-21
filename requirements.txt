@@ -2,3 +2,4 @@ jinja2
 GitPython
 requests
 PyYAML
+docopt

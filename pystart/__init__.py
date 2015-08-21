@@ -1,17 +1,33 @@
+"""PyStart - Don't waste your time on boilerplate
+
+Usage:
+  pystart [options] <name>
+
+Options:
+  -h --help             Show this screen.
+  --destroy-everything  Destroy repo locally and remotely.
+  --all                 Equivalent to '--github'.
+  --github              Put the new project on GitHub.
+"""
+
 import os
 import sys
 
 import git
 from jinja2 import Environment, PackageLoader
+from docopt import docopt
+
+import pystart.github
 
 
 __version__ = "0.0.1"
 
 ENV = Environment(loader=PackageLoader('pystart', 'templates'))
+PROJECT_NAME = ""
 
 
 def get_project_name():
-    return sys.argv[1]
+    return PROJECT_NAME
 
 
 def get_template_to_file_mapping():
@@ -55,11 +71,22 @@ def commit_files(repo):
 
 
 def main():
+    options = docopt(__doc__, help=True)
+    global PROJECT_NAME
+    PROJECT_NAME = options['<name>']
+    if options['--destroy-everything']:
+        pystart.github.teardown_project(get_project_name())
+        return
+    if options['--all']:
+        options['--github'] = True
     make_directories()
     os.chdir(get_project_name())
     repo = init_repo()
     build_files()
     commit_files(repo)
+    if options['--github']:
+        pystart.github.create_project(get_project_name())
+        pystart.github.push_to_github(get_project_name(), repo)
 
 
 if __name__ == "__main__":
